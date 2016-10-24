@@ -1,0 +1,3 @@
+volumes/data_master/*
+volumes/data_slave_2/*
+volumes/data_slave_1/*

@@ -1,0 +1,47 @@
+
+
+dnsdock: 
+      image: tonistiigi/dnsdock 
+      volumes: 
+            - /var/run/docker.sock:/run/docker.sock 
+      ports: 
+            - 10.10.108.96:53:53/udp
+      dns:
+            - 114.114.114.114      
+mongo_master:
+      build: images/mongo
+      ports:
+            - "27005:27017"
+      volumes:
+            - ./volumes/data_master:/data/db
+            # - ./volumes/data_slave_2:/xinghuo
+      entrypoint: ./entrypoint.sh  
+      command: ['mongod','--replSet','rs0'] 
+      dns: 10.10.108.96 
+      environment:
+         - DNSDOCK_NAME=mongo_master
+         - DNSDOCK_IMAGE=mongo_master          
+mongo_slave1:
+      build: images/mongo
+      ports:
+            - "27006:27017"
+      volumes:
+            - ./volumes/data_slave_1:/data/db    
+      dns: 10.10.108.96 
+      command: ['mongod','--replSet','rs0'] 
+
+      environment:
+         - DNSDOCK_NAME=mongo_slave1
+         - DNSDOCK_IMAGE=mongo_slave1
+mongo_slave2:
+      build: images/mongo
+      ports:
+            - "27007:27017"            
+      volumes:
+            - ./volumes/data_slave_2:/data/db
+      dns: 10.10.108.96
+      command: ['mongod','--replSet','rs0'] 
+
+      environment:
+         - DNSDOCK_NAME=mongo_slave2
+         - DNSDOCK_IMAGE=mongo_slave2
